@@ -1,20 +1,41 @@
 import factory
-from apps.library.models import Book
+from apps.library.models import Book, Person, Rental
 from faker import Faker
 import random
+from datetime import timedelta
 
-
-fake = Faker()
+fake = Faker("pt_BR")
 
 
 class BookFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         model = Book
-    title = factory.LazyAttribute(lambda _: "Book Title %s" % fake.word())
+    title = factory.LazyAttribute(lambda _: fake.word())
     description = factory.LazyAttribute(
-        lambda _: " Description: %s" % fake.sentences())
+        lambda _: fake.sentences())
     pages = factory.LazyAttribute(
         lambda _: fake.random_int(min=50, max=1000))
     author = factory.LazyAttribute(lambda _: fake.name())
     status = random.choice(["available", "busy"])
+
+
+class PersonFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Person
+    full_name = factory.LazyAttribute(lambda _: fake.name())
+    document = factory.LazyAttribute(lambda _: fake.cpf())
+    email = factory.LazyAttribute(lambda _: fake.email())
+    phone = factory.LazyAttribute(lambda _: fake.phone_number())
+
+
+class RentalFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Rental
+
+    book = factory.SubFactory(BookFactory)
+    person = factory.SubFactory(PersonFactory)
+    days = factory.LazyAttribute(lambda _: fake.random_int(10, 100))
+    start_date = factory.LazyAttribute(
+        lambda _: fake.date_between('-30d', 'today'))
+    end_date = factory.LazyAttribute(
+        lambda obj: obj.start_date + timedelta(days=obj.days))
