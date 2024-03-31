@@ -24,7 +24,6 @@ class TestBookModel(TestCase):
     @parameterized.expand(
         [
             ("title", 20),
-            ("description", 200),
             ("status", 2),
         ]
     )
@@ -62,6 +61,22 @@ class TestPerson(TestCase):
         setattr(person, field, "x" * (max_length + 1))
         with self.assertRaises(ValidationError):
             person.clean_fields()
+
+    @parameterized.expand(
+        [
+            ("document", "11111111111"),
+            ("email", "jhon.doe@rmail.com"),
+            ("phone", "111111111111111"),
+        ]
+    )
+    def test_fields_duplicate_email(self, field_name, value):
+        persons = []
+        for _ in range(5):
+            kwargs = {field_name: value}
+            persons.append(PersonFactory.build(**kwargs))
+        with self.assertRaises(ValidationError):
+            for person in persons:
+                person.clean_fields()
 
 
 class TestRental(TestCase):

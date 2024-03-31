@@ -1,7 +1,6 @@
 import factory
 from apps.library.models import Book, Person, Rental
 from faker import Faker
-import random
 from datetime import timedelta
 
 fake = Faker("pt_BR")
@@ -16,7 +15,10 @@ class BookFactory(factory.django.DjangoModelFactory):
     pages = factory.LazyAttribute(
         lambda _: fake.random_int(min=50, max=1000))
     author = factory.LazyAttribute(lambda _: fake.name())
-    status = random.choice(["available", "busy"])
+    created_at = factory.LazyAttribute(
+        lambda _: fake.date_time_between(start_date="-1y", end_date="now"))
+    updated_at = factory.LazyAttribute(
+        lambda _: fake.date_time_between(start_date="-1y", end_date="now"))
 
 
 class PersonFactory(factory.django.DjangoModelFactory):
