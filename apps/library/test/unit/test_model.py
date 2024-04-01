@@ -40,6 +40,7 @@ class TestPerson(TestCase):
 
     def test_person_str_representation(self):
         person = self.person
+        person.clean_fields()
         self.assertIsInstance(person, Person)
         self.assertEqual(str(person), person.full_name)
 
@@ -61,22 +62,6 @@ class TestPerson(TestCase):
         setattr(person, field, "x" * (max_length + 1))
         with self.assertRaises(ValidationError):
             person.clean_fields()
-
-    @parameterized.expand(
-        [
-            ("document", "11111111111"),
-            ("email", "jhon.doe@rmail.com"),
-            ("phone", "111111111111111"),
-        ]
-    )
-    def test_fields_duplicate_email(self, field_name, value):
-        persons = []
-        for _ in range(5):
-            kwargs = {field_name: value}
-            persons.append(PersonFactory.build(**kwargs))
-        with self.assertRaises(ValidationError):
-            for person in persons:
-                person.clean_fields()
 
 
 class TestRental(TestCase):

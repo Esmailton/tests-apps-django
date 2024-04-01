@@ -11,7 +11,7 @@ class BookFactory(factory.django.DjangoModelFactory):
         model = Book
     title = factory.LazyAttribute(lambda _: fake.word())
     description = factory.LazyAttribute(
-        lambda _: fake.sentences())
+        lambda _: fake.word())
     pages = factory.LazyAttribute(
         lambda _: fake.random_int(min=50, max=1000))
     author = factory.LazyAttribute(lambda _: fake.name())
@@ -25,9 +25,11 @@ class PersonFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Person
     full_name = factory.LazyAttribute(lambda _: fake.name())
-    document = factory.LazyAttribute(lambda _: fake.cpf())
+    document = factory.LazyAttribute(
+        lambda _: fake.numerify(text='###########'))
     email = factory.LazyAttribute(lambda _: fake.email())
-    phone = factory.LazyAttribute(lambda _: fake.phone_number())
+    phone = factory.LazyAttribute(
+        lambda _: fake.numerify(text='###############'))
 
 
 class RentalFactory(factory.django.DjangoModelFactory):
